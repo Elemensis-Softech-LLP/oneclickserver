@@ -9,14 +9,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/deploy', function(req, res, next){
-  console.log("=====================");
-  console.log("=====================");
-  console.log("=====================");
-  console.log(req.body);
-  shell.exec('sh ./public/scripts/create.sh')
-  console.log("=====================");
-  console.log("=====================");
-  console.log("=====================");
+  // console.log(req.body);
+  let txHash = req.body.txHash;
+  console.log(txHash);
+  console.log("HELLO MY NAME IS " + txHash);
+  shell.exec("sh ./public/scripts/create.sh " + txHash)
 })
 
 
