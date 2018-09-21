@@ -4,10 +4,30 @@ var router = express.Router();
 const shell = require('shelljs');
 
 const Masternode = require('../models/masternode');
+const Coin = require('../models/coin');
+const User = require('../models/user');
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+
+  let user;
+  let coin;
+  Coin.find({}, function(err, data){
+    if(err) {
+      res.render('error')
+    } else {
+      coin = data;
+      User.find({}, function(err, data){
+        if(err) {
+          res.render('error')
+        } else {
+          user = data;
+          res.render('index', { title: 'Express', "coins": coin, "user": user });
+        }
+      });
+    }
+  });
 });
 
 router.get('/masternodes', function(req, res, next) {
@@ -28,11 +48,15 @@ router.get('/success', function(req, res, next){
 
 router.post('/deploy/masternode', function(req, res, next){
   const masternodeprivkey = req.body.masternodeprivkey;
+  const _owner = req.body.owner;
+  const _coin = req.body.coin;
   const newMasternode = new Masternode({
-    masternodeprivkey: masternodeprivkey
+    masternodeprivkey: masternodeprivkey,
+    _owner: _owner,
+    _coin: _coin
   })
   newMasternode.save();
-  res.redirect('/success');
+  res.redirect('/masternodes');
   // try {
   //   await newMasternode.save();
   // } catch (err) {
