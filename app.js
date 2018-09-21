@@ -9,6 +9,7 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+var coinsRouter = require('./routes/coins');
 
 
 var app = express();
@@ -36,6 +37,7 @@ app.use(cookieParser());
 // Routes configuration
 app.use('/', indexRouter);
 app.use('/', authRouter);
+app.use('/', coinsRouter);
 // app.use('/', auth-routes);
 app.use('/users', usersRouter);
 // const authRoutes = require('./routes/auth-routes');
