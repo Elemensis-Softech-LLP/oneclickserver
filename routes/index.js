@@ -41,11 +41,6 @@ router.post('/deploy/masternode', function(req, res, next){
   
 });
 
-
-
-
-
-
 router.post('/deploy', function(req, res, next){
   // console.log(req.body);
   let masternodeprivkey = req.body.masternodeprivkey;
@@ -57,7 +52,5 @@ router.post('/deploy', function(req, res, next){
   //   console.log('Program stderr:', stderr);
   // });
 })
-
-
 
 module.exports = router;

@@ -8,6 +8,7 @@ var mongoose = require("mongoose");
 require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
 
 
 var app = express();
@@ -32,8 +33,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Routes configuration
 app.use('/', indexRouter);
+app.use('/', authRouter);
+// app.use('/', auth-routes);
 app.use('/users', usersRouter);
+// const authRoutes = require('./routes/auth-routes');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
