@@ -11,7 +11,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/masternodes', function(req, res, next) {
-  res.render('masternodes', { title: 'Masternodes' });
+  Masternode.find({}, function(err, data){
+    if(err) {
+      res.render('error')
+    } else {
+      console.log(data[0].masternodeprivkey)
+      res.render('masternodes', { "masternodes": data });
+    }
+  });
 });
 
 
