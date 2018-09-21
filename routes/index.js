@@ -3,7 +3,7 @@ var router = express.Router();
 
 const shell = require('shelljs');
 
-const Masternode = require('../models/masternodes');
+const Masternode = require('../models/masternode');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
