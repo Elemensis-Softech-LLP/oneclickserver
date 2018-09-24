@@ -65,4 +65,35 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// Authenticate user via passport
+passport.use('local-login', new LocalStrategy({
+  passReqToCallback : true,
+  usernameField: 'email'
+}, 
+function (req, email, password, next) {
+    User.findOne({
+      email: email
+    }, function (err, user) {
+      if (err) {
+        //req.flash('error', 'Something went wrong');
+        return next(err);
+      }
+      if (!user) {
+        //req.flash('error', 'Incorrect email');
+        return next(null, false, {
+          message: 'Incorrect email'
+        });
+      }
+      if (!bcrypt.compareSync(password, user.password)) {
+        //req.flash('error', 'Incorrect password');
+        return next(null, false, {
+          message: "Incorrect password"
+        });
+      }
+      return next(null, user);
+    });
+  }
+));
+
+
 module.exports = app;
