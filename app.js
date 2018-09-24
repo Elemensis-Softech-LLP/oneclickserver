@@ -7,12 +7,19 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
 var mongoose = require("mongoose");
+
+const passport       = require('passport');
+const LocalStrategy  = require('passport-local').Strategy;
+const session        = require("express-session");
+
+var app = express();
+
+
+// Route configuration
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var coinsRouter = require('./routes/coins');
-
-var app = express();
 
 // MongoDB setup
 mongoose.connect(process.env.MONGODB_URI).then(
