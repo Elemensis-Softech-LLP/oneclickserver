@@ -11,12 +11,12 @@ const {
 } = require('connect-ensure-login');
 
 // Get Login page
-authRouter.get('/login', function(req, res, next) {
+authRouter.get('/login', ensureLoggedOut('/'), function(req, res, next) {
   res.render('auth/login');
 });
 
 // Post Log-In request
-authRouter.post('/login', passport.authenticate('local-login', {
+authRouter.post('/login', ensureLoggedOut(), passport.authenticate('local-login', {
     // authRoutes.post('/login', ensureLoggedOut(), passport.authenticate('local-login', {
         successRedirect: '/',
         failureRedirect: '/login'
@@ -24,7 +24,7 @@ authRouter.post('/login', passport.authenticate('local-login', {
 );
 
 // Log-out
-authRouter.get('/logout', function (req, res) {
+authRouter.get('/logout', ensureLoggedIn('/login'), function (req, res) {
     req.logout();
     res.redirect('login');
 });
