@@ -15,7 +15,7 @@ authRouter.get('/login', function(req, res, next) {
   res.render('auth/login');
 });
 
-//ROUTE - LOGIN USER
+// Post Log-In request
 authRouter.post('/login', passport.authenticate('local-login', {
     // authRoutes.post('/login', ensureLoggedOut(), passport.authenticate('local-login', {
         successRedirect: '/',
@@ -23,6 +23,11 @@ authRouter.post('/login', passport.authenticate('local-login', {
     })
 );
 
+// Log-out
+authRouter.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('login');
+});
 
 // Get Signup page
 authRouter.get('/signup', function(req, res, next) {
