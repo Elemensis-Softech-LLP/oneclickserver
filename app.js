@@ -8,12 +8,15 @@ var bodyParser = require('body-parser')
 var logger = require('morgan');
 var mongoose = require("mongoose");
 
+const bcrypt = require("bcrypt");
 const passport       = require('passport');
 const LocalStrategy  = require('passport-local').Strategy;
 const session        = require("express-session");
 
 var app = express();
 
+// Import any mongodb models
+const User = require("./models/user");
 
 // Route configuration
 var indexRouter = require('./routes/index');
@@ -36,10 +39,24 @@ app.set('view engine', 'ejs');
 // app.engine('html', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, 'public')));
 
+//session config
+app.use(session({ 
+  secret: "puma wolf",
+  resave: true,
+  saveUninitialized: true 
+}));
+
+// Access POST params
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // Routes configuration
 app.use('/', indexRouter);
@@ -65,27 +82,38 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// //passport config
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
 // Authenticate user via passport
 passport.use('local-login', new LocalStrategy({
   passReqToCallback : true,
   usernameField: 'email'
 }, 
 function (req, email, password, next) {
-    User.findOne({
-      email: email
-    }, function (err, user) {
+  User.findOne({
+    email: email
+  }, function (err, user) {
+      console.log(err)
       if (err) {
-        //req.flash('error', 'Something went wrong');
+        console.log("There was an error")
         return next(err);
       }
       if (!user) {
-        //req.flash('error', 'Incorrect email');
+        console.log("User does not exist")
         return next(null, false, {
           message: 'Incorrect email'
         });
       }
       if (!bcrypt.compareSync(password, user.password)) {
-        //req.flash('error', 'Incorrect password');
         return next(null, false, {
           message: "Incorrect password"
         });

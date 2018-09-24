@@ -3,11 +3,16 @@ var coinsRouter = express.Router();
 
 const Coin = require('../models/coin');
 
-coinsRouter.get('/coins/create', function(req, res, next) {
+const {
+  ensureLoggedIn,
+  ensureLoggedOut
+} = require('connect-ensure-login');
+
+coinsRouter.get('/coins/create', ensureLoggedIn('/login'), function(req, res, next) {
    res.render('coins/create') 
 });
 
-coinsRouter.post('/coins/create', function(req, res, next) {
+coinsRouter.post('/coins/create', ensureLoggedIn('/login'), function(req, res, next) {
     const coinName = req.body.coinName;
     const coinTicker = req.body.coinTicker;
     const newCoin = new Coin({
@@ -18,7 +23,7 @@ coinsRouter.post('/coins/create', function(req, res, next) {
     res.redirect('/coins')
  });
 
-coinsRouter.get('/coins', function(req, res, next) {
+coinsRouter.get('/coins', ensureLoggedIn('/login'), function(req, res, next) {
     Coin.find({}, function(err, data){
         if(err) {
           res.render('error')
@@ -31,3 +36,4 @@ coinsRouter.get('/coins', function(req, res, next) {
 
 
 module.exports = coinsRouter;
+

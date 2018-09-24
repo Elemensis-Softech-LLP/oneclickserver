@@ -5,6 +5,10 @@ const passport = require('passport');
 
 const User = require('../models/user');
 
+const {
+    ensureLoggedIn,
+    ensureLoggedOut
+} = require('connect-ensure-login');
 
 // Get Login page
 authRouter.get('/login', function(req, res, next) {
@@ -13,10 +17,10 @@ authRouter.get('/login', function(req, res, next) {
 
 //ROUTE - LOGIN USER
 authRouter.post('/login', passport.authenticate('local-login', {
-  // authRoutes.post('/login', ensureLoggedOut(), passport.authenticate('local-login', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
+    // authRoutes.post('/login', ensureLoggedOut(), passport.authenticate('local-login', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    })
 );
 
 

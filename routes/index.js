@@ -1,7 +1,11 @@
 var express = require('express');
 var router = express.Router();
-
 const shell = require('shelljs');
+
+const {
+  ensureLoggedIn,
+  ensureLoggedOut
+} = require('connect-ensure-login');
 
 const Masternode = require('../models/masternode');
 const Coin = require('../models/coin');
@@ -9,7 +13,7 @@ const User = require('../models/user');
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', ensureLoggedIn('/login'), function(req, res, next) {
 
   let user;
   let coin;
@@ -30,7 +34,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/masternodes', function(req, res, next) {
+router.get('/masternodes', ensureLoggedIn('/login'), function(req, res, next) {
   Masternode.find({}, function(err, data){
     if(err) {
       res.render('error')
@@ -46,7 +50,7 @@ router.get('/success', function(req, res, next){
   res.render('success', { title: 'SUCCESS' });
 })
 
-router.post('/deploy/masternode', function(req, res, next){
+router.post('/deploy/masternode', ensureLoggedIn('/login'), function(req, res, next){
   const masternodeprivkey = req.body.masternodeprivkey;
   const _owner = req.body.owner;
   const _coin = req.body.coin;
@@ -65,7 +69,7 @@ router.post('/deploy/masternode', function(req, res, next){
   
 });
 
-router.post('/deploy', function(req, res, next){
+router.post('/deploy', ensureLoggedIn('/login'), function(req, res, next){
   // console.log(req.body);
   let masternodeprivkey = req.body.masternodeprivkey;
   shell.exec("sh ./public/scripts/create.sh " + masternodeprivkey, {async:true})
