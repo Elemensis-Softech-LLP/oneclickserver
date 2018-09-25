@@ -14,24 +14,7 @@ const User = require('../models/user');
 
 /* GET home page. */
 router.get('/', ensureLoggedIn('/login'), function(req, res, next) {
-
-  let user;
-  let coin;
-  Coin.find({}, function(err, data){
-    if(err) {
-      res.render('error')
-    } else {
-      coin = data;
-      User.find({}, function(err, data){
-        if(err) {
-          res.render('error')
-        } else {
-          user = data;
-          res.render('index', { title: 'Express', "coins": coin, "user": user });
-        }
-      });
-    }
-  });
+  res.render('index', {title: 'Express'})
 });
 
 router.get('/masternodes', ensureLoggedIn('/login'), function(req, res, next) {
@@ -52,15 +35,27 @@ router.get('/success', function(req, res, next){
 
 router.post('/deploy/masternode', ensureLoggedIn('/login'), function(req, res, next){
   const masternodeprivkey = req.body.masternodeprivkey;
-  const _owner = req.body.owner;
-  const _coin = req.body.coin;
-  const newMasternode = new Masternode({
-    masternodeprivkey: masternodeprivkey,
-    _owner: _owner,
-    _coin: _coin
-  })
-  newMasternode.save();
-  res.redirect('/masternodes');
+  // const _coin = req.body.coin;
+  // let _coin;
+  let _owner = req.user;
+  console.log(_owner)
+  Coin.findOne({'coinTicker': "ANON"}, function(err, data){
+    if(err) {
+      res.render('error')
+    } else {
+      let _coin = data;
+      // console.log("Here's the owner" + _owner);
+      // console.log("Here's the coin" + _coin);
+
+      const newMasternode = new Masternode({
+        masternodeprivkey: masternodeprivkey,
+        _owner: _owner,
+        _coin: _coin
+      })
+      newMasternode.save();
+      res.redirect('/');
+    }
+  });
   // try {
   //   await newMasternode.save();
   // } catch (err) {

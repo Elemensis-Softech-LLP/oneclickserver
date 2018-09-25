@@ -4,8 +4,8 @@ const Schema   = mongoose.Schema;
 const masternodeSchema = new Schema({
   // ADD SCHEMA INFO HERE
   masternodeprivkey: {type: String, required: true},
-  _owner: { type: Schema.Types.ObjectId, ref: 'User' }, 
-  _coin: { type: Schema.Types.ObjectId, ref: 'Coin' }, 
+  _owner: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
+  _coin: { type: Schema.Types.ObjectId, ref: 'Coin', required: true }, 
   },{
       timestamps: {
         createdAt: "created_at",
