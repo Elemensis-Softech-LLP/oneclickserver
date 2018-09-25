@@ -35,6 +35,36 @@
             <button>Pay Now</button>
         </form>
 
+        <h1 class="h3 mb-3 font-weight-normal">Bill History</h1>
+        <div class="container mt-5">
+                <div class="row justify-content-center">
+                  <div class="col-8">
+                      <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Date</th>
+                              <th scope="col">Bill</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <% bills.forEach(function (bill) { %>
+                                  <tr>
+                                    <td><%= bill._stripeCharge.created %></td>
+                                    <td><%= bill._stripeCharge.amount %></td>
+                                  </tr>
+                              <% }) %>
+                          </tbody>
+                        </table>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+
+
         <script src="https://js.stripe.com/v3/"></script>
         <script src="/javascripts/stripe.js" async defer></script>
     </body>

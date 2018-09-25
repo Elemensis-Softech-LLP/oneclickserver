@@ -15,7 +15,21 @@ const {
 
 
 billingRouter.get('/billing', ensureLoggedIn(), function(req, res, next) {
-    res.render('billing/index', {title: "New Billing"})
+    let _user = req.user;
+
+    Charge.find({
+        _owner: _user
+    }, function(err, data) {
+        if (err) {
+            console.log("There's been an error");
+            res.render('error');
+        } else {
+            res.render('billing/index', {title: "New Billing", "bills": data});
+        }
+    })
+
+
+
 })
 
 billingRouter.post('/billing/update', ensureLoggedIn(), function(req, res, next) {
@@ -39,7 +53,7 @@ billingRouter.post('/billing/update', ensureLoggedIn(), function(req, res, next)
         _user.save();
     })();
 
-    res.redirect('/');
+    res.redirect('/billing');
 });        
 
 billingRouter.post('/billing/charges/create', ensureLoggedIn(), function(req, res, next){
@@ -67,7 +81,7 @@ billingRouter.post('/billing/charges/create', ensureLoggedIn(), function(req, re
         newCharge.save();
 
     })();
-    res.redirect('/')
+    res.redirect('/billing')
 
 });
 
