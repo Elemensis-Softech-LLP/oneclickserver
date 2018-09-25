@@ -145,8 +145,8 @@ authRouter.get('/confirm/:token', function(req, res) {
 
 // Render forgot password view
 authRouter.get('/forgot_password', (req, res, next) => {
-    res.render('auth/forgotPassword')
-})
+    res.render('auth/forgotPassword');
+});
 
 authRouter.post('/forgot_password', (req, res, next) => {
     (async () => {
@@ -166,7 +166,29 @@ authRouter.post('/forgot_password', (req, res, next) => {
         }
     })();
     res.redirect('/login')
-})
+});
+
+authRouter.get('/password_reset/:token', (req, res) => {
+    (async () => {
+        const _user = await User.findOne({
+            resetPasswordToken: req.params.token
+        });
+        console.log(_user)
+    })();
+    res.render('auth/passwordReset', {title: 'Express', passwordResetoken: req.params.token});
+});
+
+authRouter.post('/password_reset/:token', (req, res, next) => {
+    (async () => {
+        const _user = await User.findOne({
+            resetPasswordToken: req.params.token
+        });
+        let hashedPassword = generateHashedPassword(req.body.newPassword);
+        _user.password = hashedPassword;
+        _user.save();
+    })();
+    res.redirect('/login');
+});
 
 function dispatchMail(recipient, type) {
     (async () => {
@@ -758,7 +780,7 @@ function passwordResetTemplate(email, token, host){
                                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto;">
                                             <tr>
                                                 <td class="button-td button-td-primary" style="border-radius: 4px; background: #555555;">
-                                                    <a class="button-a button-a-primary" href="http://${host}/reset/${token}" style="background: #47192E; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; display: block; border-radius: 4px;"><span class="button-link" style="color:#ffffff">Reset Password</span></a>
+                                                    <a class="button-a button-a-primary" href="http://${host}/password_reset/${token}" style="background: #47192E; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; display: block; border-radius: 4px;"><span class="button-link" style="color:#ffffff">Reset Password</span></a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -769,7 +791,7 @@ function passwordResetTemplate(email, token, host){
                                     <td style="padding: 40px 40px 0px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
                                         <p style="margin: 0;">If that doesn't work, copy and paste the following link in your browser:</p>
                                         <br>
-                                        <p style="margin: 0;">http://${host}/reset/${token}</p>
+                                        <p style="margin: 0;">http://${host}/password_reset/${token}</p>
                                     </td>
                                 </tr>
                             </table>
