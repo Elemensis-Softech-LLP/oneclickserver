@@ -126,6 +126,22 @@ authRouter.post('/signup', (req, res, next) => {
   });
 });
 
+authRouter.get('/confirm/:token', function(req, res) {
+    (async () => {
+        const _user = await User.findOne({
+            accountActivationToken: req.params.token
+        });
+        if (_user.isAccountActivated = true) {
+            // TODO: flash/alert error to user "your account has already been activated"
+            res.redirect('/login')
+        } else {
+            _user.isAccountActivated = true
+            _user.save();
+        }
+    })();
+    res.redirect('/');
+});
+
 //GENERATE HASHED PASSWORD
 function generateHashedPassword(password) {
   let hashPass;
@@ -134,9 +150,6 @@ function generateHashedPassword(password) {
   hashPass = bcrypt.hashSync(password, salt);
   return hashPass;
 }
-
-
-
 
 function emailTemplateSignup(email, token, host) {
     let newEmail = `<!DOCTYPE html>
