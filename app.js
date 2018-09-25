@@ -23,6 +23,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var coinsRouter = require('./routes/coins');
+var billingRouter = require('./routes/billing');
 
 // MongoDB setup
 mongoose.connect(process.env.MONGODB_URI).then(
@@ -62,6 +63,7 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/', authRouter);
 app.use('/', coinsRouter);
+app.use('/', billingRouter);
 // app.use('/', auth-routes);
 app.use('/users', usersRouter);
 // const authRoutes = require('./routes/auth-routes');
