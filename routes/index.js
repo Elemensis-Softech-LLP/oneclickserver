@@ -14,7 +14,18 @@ const User = require('../models/user');
 
 /* GET home page. */
 router.get('/', ensureLoggedIn('/login'), function(req, res, next) {
-  res.render('index', {title: 'Express'})
+  let _user = req.user;
+  Masternode.find({
+    "_owner" : _user,
+  }, function(err, data){
+      if(err){
+        console.log("There's been an error");
+        res.render('error');
+      } else {
+        _masternodes = data;
+        res.render('index', {title: 'Express', "masternodes": _masternodes})
+      }
+  })
 });
 
 router.get('/masternodes', ensureLoggedIn('/login'), function(req, res, next) {
