@@ -9,8 +9,8 @@ const userSchema = new Schema({
   resetPasswordExpires: Date,
   isAccountActivated: { type: Boolean, default: false },
   accountActivationToken: String,
-  stripeToken: String,
-  stripeCustomerId: Object,
+  stripeToken: Object,
+  stripeCustomer: Object,
 }, {
   timestamps: {
     createdAt: "created_at",
