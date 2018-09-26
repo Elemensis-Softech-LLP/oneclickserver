@@ -19,7 +19,6 @@ productRouter.get('/products/create', (req, res, next) => {
 });
 
 productRouter.post('/products/create', function(req, res, next){
-
     (async function () {
         const product = await stripe.products.create({
             name: 'My SaaS Platform 3',
