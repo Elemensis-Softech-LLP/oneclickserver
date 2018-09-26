@@ -10,10 +10,11 @@ const {
 const Masternode = require('../models/masternode');
 const Coin = require('../models/coin');
 const User = require('../models/user');
-
+const Plan = require('../models/plan');
+const stripe = require("stripe")(process.env.STRIPE_TEST_KEY);
 
 /* GET home page. */
-router.get('/', ensureLoggedIn('/login'), function(req, res, next) {
+router.get('/', function(req, res, next) {
   let _user = req.user;
   Masternode.find({
     "_owner" : _user,
@@ -44,35 +45,31 @@ router.get('/success', function(req, res, next){
   res.render('success', { title: 'SUCCESS' });
 })
 
-router.post('/deploy/masternode', ensureLoggedIn('/login'), function(req, res, next){
+router.post('/deploy/masternode', function(req, res, next){
+  // TODO: Dynamically generate masternodeprivkey for user
   const masternodeprivkey = req.body.masternodeprivkey;
-  // const _coin = req.body.coin;
-  // let _coin;
-  let _owner = req.user;
-  console.log(_owner)
-  Coin.findOne({'coinTicker': "ANON"}, function(err, data){
-    if(err) {
-      res.render('error')
-    } else {
-      let _coin = data;
-      // console.log("Here's the owner" + _owner);
-      // console.log("Here's the coin" + _coin);
+  const owner = req.user;
+  // console.log(owner.stripeCustomer.id)
+  (async () => {
+    const coin = await Coin.findOne({'coinTicker': "ANON"});
+    const plan = await Plan.findOne({'_id': coin.plan})
 
-      const newMasternode = new Masternode({
-        masternodeprivkey: masternodeprivkey,
-        _owner: _owner,
-        _coin: _coin
-      })
-      newMasternode.save();
-      res.redirect('/');
-    }
-  });
-  // try {
-  //   await newMasternode.save();
-  // } catch (err) {
-  //   console.log("THERE'S BEEN A FATAL ERROR")
-  // }
-  
+    // console.log(plan.stripePlan.id)
+    const stripeSubscription = await stripe.subscriptions.create({
+      customer: owner.stripeCustomer.id,
+      items: [{plan: plan.stripePlan.id}]
+    })
+
+    const newMasternode = new Masternode({
+      masternodeprivkey: masternodeprivkey,
+      _owner: owner,
+      _coin: coin,
+      stripeSubscription: stripeSubscription
+    })
+
+    newMasternode.save();
+  })();
+  res.redirect('/');
 });
 
 router.post('/deploy', ensureLoggedIn('/login'), function(req, res, next){

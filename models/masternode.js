@@ -6,6 +6,7 @@ const masternodeSchema = new Schema({
   masternodeprivkey: {type: String, required: true},
   _owner: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
   _coin: { type: Schema.Types.ObjectId, ref: 'Coin', required: true }, 
+  stripeSubscription: {type: Object}
   },{
       timestamps: {
         createdAt: "created_at",
