@@ -27,10 +27,7 @@ billingRouter.get('/billing', ensureLoggedIn(), function(req, res, next) {
             res.render('billing/index', {title: "New Billing", "bills": data});
         }
     })
-
-
-
-})
+});
 
 billingRouter.post('/billing/update', ensureLoggedIn(), function(req, res, next) {
     // TODO: move stripe key to environment variable
