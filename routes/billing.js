@@ -61,11 +61,11 @@ billingRouter.post('/billing/charges/create', ensureLoggedIn(), function(req, re
     
     (async function() {
         // Charge the Customer instead of the card:
-        const charge = await stripe.charges.create({
-              amount: _amount,
-              currency: 'usd',
-              customer: _user.stripeCustomer.id,
-            });
+        // const charge = await stripe.charges.create({
+        //       amount: _amount,
+        //       currency: 'usd',
+        //       customer: _user.stripeCustomer.id,
+        //     });
 
         console.log(charge)            
         

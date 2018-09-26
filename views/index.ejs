@@ -20,6 +20,9 @@
           <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="/coins/create">Coins</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/billing">Billing</a>
         </li>
         <li class="nav-item">
@@ -42,7 +45,7 @@
           <img class="mb-4" src="images/anon.png" alt="" width="100" height="100">
           <h1 class="h3 mb-3 font-weight-normal">Make your masternode</h1>
           <label for="inputEmail" class="sr-only">TX HASH</label>
-          <input id="inputEmail" class="form-control" placeholder="TX HASH" name="masternodeprivkey" required autofocus>
+          <input id="inputEmail" class="form-control" placeholder="TX HASH" name="masternodeprivkey" value="edvs" autofocus hidden>
           <!-- <label for="user" class="sr-only">UserId</label>
           <input name="owner" id="inputPassword" class="form-control" placeholder="UserId" required value=<%#= user.email%>>
           <label for="coin" class="sr-only">CoinType</label>
