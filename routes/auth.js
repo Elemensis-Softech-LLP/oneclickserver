@@ -53,15 +53,17 @@ authRouter.post('/signup', (req, res, next) => {
   }
   //Check if the user already exist in the database (based on email address)
   User.findOne({
-      "email": email
+    "email": email
   }, async (err, user) => {
       if (err) {
           console.log(err);
       }
       if (user !== null) {
           console.log("The username already exists")
-          res.render("error", {
-              error: "The username already exists"
+          res.render("auth/signup", {
+              msg:{
+              "error": "The username already exists"
+              }
           });
           return;
       }
@@ -156,6 +158,12 @@ authRouter.post('/forgot_password', (req, res, next) => {
         console.log
         if(!_user) {
             console.log("User does not exist");
+            res.render("/forgot_password", {
+                msg:{
+                "error": "The username already exists"
+                }
+            });
+            return;
         } else {
             //generate random token
             const _token = crypto.randomBytes(20).toString('hex');

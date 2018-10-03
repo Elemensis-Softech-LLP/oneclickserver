@@ -6,6 +6,10 @@
   </head>
   <body class="text-center">
     <div class="container">
+
+        <%if(typeof msg == 'object' && msg){%>
+            <h1 class="h3 mb-3 font-weight-normal"><%=msg.error%></h1>
+        <% } %>
         <div class="row justify-content-md-center">
             <div class="col-8">
                 <form method="POST" action="/signup">
@@ -21,7 +25,7 @@
                     </div>
                     <div class="form-group">
                             <label for="exampleInputPassword1">Password, again</label>
-                            <input name="passwordConfirmation" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                            <input name="passwordConfirmation" type="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <a href="/login">
