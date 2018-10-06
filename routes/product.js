@@ -16,7 +16,7 @@ const {
   ensureLoggedOut
 } = require('connect-ensure-login');
 
-productRouter.get('/create', async (req, res, next) => {
+productRouter.get('/create', ensureLoggedIn('/login'), async (req, res, next) => {
   try {
     let productData = await Product.find({_user:req.user});
     res.render('products/create', {
@@ -28,7 +28,7 @@ productRouter.get('/create', async (req, res, next) => {
   }
 });
 
-productRouter.post('/create', function(req, res, next) {
+productRouter.post('/create', ensureLoggedIn('/login'),function(req, res, next) {
   (async function() {
     if(req.user){
       const product = await stripe.products.create({

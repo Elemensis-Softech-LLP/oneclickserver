@@ -33,15 +33,15 @@ billingRouter.get('/', ensureLoggedIn(), function(req, res, next) {
   })
 });
 
-billingRouter.post('/update', ensureLoggedIn(), function(req, res, next) {
+billingRouter.post('/update', ensureLoggedIn('/login'), function(req, res, next) {
   // TODO: move stripe key to environment variable
   // TODO: Defensive programming
   let _user = req.user;
   // _user.stripeToken = req.body.stripeToken;
-
   (async function() {
     // Create a Customer with Stripe:
     console.log("The Stripe Token = " + req.body.stripeToken);
+
     const customer = await stripe.customers.create({
       source: req.body.stripeToken,
       email: _user.email,
@@ -52,9 +52,8 @@ billingRouter.post('/update', ensureLoggedIn(), function(req, res, next) {
     _user.stripeCustomer = customer;
     //  Save and update User record
     _user.save();
+    res.redirect('/billing');
   })();
-
-  res.redirect('/billing');
 });
 
 billingRouter.post('/charges/create', ensureLoggedIn(), function(req, res, next) {
@@ -71,7 +70,7 @@ billingRouter.post('/charges/create', ensureLoggedIn(), function(req, res, next)
     //       customer: _user.stripeCustomer.id,
     //     });
 
-    console.log(charge)
+    // console.log(charge)
 
     // Store Charge record in mongodb as new record;
     const newCharge = new Charge({

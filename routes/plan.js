@@ -18,7 +18,7 @@ const {
   ensureLoggedOut
 } = require('connect-ensure-login');
 
-planRouter.get('/create', async (req, res, next) => {
+planRouter.get('/create', ensureLoggedIn('/login'), async (req, res, next) => {
   try {
     let productData = await Product.find({
       _user: req.user
@@ -38,7 +38,7 @@ planRouter.get('/create', async (req, res, next) => {
 });
 
 
-planRouter.post('/create', function(req, res, next) {
+planRouter.post('/create', ensureLoggedIn('/login'),function(req, res, next) {
   // console.log(req.body.product)
   (async () => {
     let product = await Product.findOne({

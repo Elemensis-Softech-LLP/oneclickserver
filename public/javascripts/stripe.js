@@ -57,18 +57,18 @@
 //   });
 // });
 //
-// function stripeTokenHandler(token) {
-//   // Insert the token ID into the form so it gets submitted to the server
-//   var form = document.getElementById('payment-form');
-//   var hiddenInput = document.createElement('input');
-//   hiddenInput.setAttribute('type', 'hidden');
-//   hiddenInput.setAttribute('name', 'stripeToken');
-//   hiddenInput.setAttribute('value', token.id);
-//   form.appendChild(hiddenInput);
-//
-//   // Submit the form
-//   form.submit();
-// }
+function stripeTokenHandler(token) {
+  // Insert the token ID into the form so it gets submitted to the server
+  var form = document.getElementById('payment-form');
+  var hiddenInput = document.createElement('input');
+  hiddenInput.setAttribute('type', 'hidden');
+  hiddenInput.setAttribute('name', 'stripeToken');
+  hiddenInput.setAttribute('value', token.id);
+  form.appendChild(hiddenInput);
+
+  // Submit the form
+  form.submit();
+}
 
 
 
@@ -79,7 +79,7 @@ function registerElements(elements, exampleName) {
   var example = document.querySelector(formClass);
 
   var form = example.querySelector('form');
-  var resetButton = example.querySelector('a.reset');
+  // var resetButton = example.querySelector('a.reset');
   var error = form.querySelector('.error');
   var errorMessage = error.querySelector('.message');
 
@@ -191,11 +191,12 @@ function registerElements(elements, exampleName) {
     stripe.createToken(elements[0], additionalData).then(function(result) {
       // Stop loading!
       example.classList.remove('submitting');
-
+      console.log(result);
       if (result.token) {
         // If we received a token, show the token ID.
-        example.querySelector('.token').innerText = result.token.id;
+        // example.querySelector('.token').innerText = result.token.id;
         example.classList.add('submitted');
+        stripeTokenHandler(result.token);
       } else {
         // Otherwise, un-disable inputs.
         enableInputs();
@@ -203,24 +204,24 @@ function registerElements(elements, exampleName) {
     });
   });
 
-  resetButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    // Resetting the form (instead of setting the value to `''` for each input)
-    // helps us clear webkit autofill styles.
-    form.reset();
-
-    // Clear each Element.
-    elements.forEach(function(element) {
-      element.clear();
-    });
-
-    // Reset error state as well.
-    error.classList.remove('visible');
-
-    // Resetting the form does not un-disable inputs, so we need to do it separately:
-    enableInputs();
-    example.classList.remove('submitted');
-  });
+  // resetButton.addEventListener('click', function(e) {
+  //   e.preventDefault();
+  //   // Resetting the form (instead of setting the value to `''` for each input)
+  //   // helps us clear webkit autofill styles.
+  //   form.reset();
+  //
+  //   // Clear each Element.
+  //   elements.forEach(function(element) {
+  //     element.clear();
+  //   });
+  //
+  //   // Reset error state as well.
+  //   error.classList.remove('visible');
+  //
+  //   // Resetting the form does not un-disable inputs, so we need to do it separately:
+  //   enableInputs();
+  //   example.classList.remove('submitted');
+  // });
 }
 
 (function() {
@@ -242,6 +243,7 @@ function registerElements(elements, exampleName) {
    * Card Element
    */
   var card = elements.create("card", {
+    hidePostalCode: true,
     style: {
       base: {
         color: "#32325D",

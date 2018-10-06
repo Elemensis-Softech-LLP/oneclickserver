@@ -50,7 +50,7 @@
                     <select name="plan" class="form-control" placeholder="Select Category">
                             <option value="">Select Plan</option>
                             <% plans.forEach(function(plan) { %>
-                              <option value="<%=plan.id%>"><%=plan.name%></option>
+                              <option value="<%=plan.id%>"><%=plan.name%> (<%=plan.description%>)</option>
                           <%})%>
                         </select>
                     <button type="submit" class="btn btn-primary">Submit</button>
