@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const Charge = mongoose.model('Charge');
 const User = mongoose.model('User');
 const stripe = require("stripe")(process.env.STRIPE_TEST_KEY);
+const _ = require('lodash');
 
 const {
   ensureLoggedIn,
@@ -15,7 +16,7 @@ const {
 } = require('connect-ensure-login');
 
 
-billingRouter.get('/', ensureLoggedIn(), function(req, res, next) {
+billingRouter.get('/', ensureLoggedIn('/login'), function(req, res, next) {
   let _user = req.user;
 
   Charge.find({
@@ -27,33 +28,98 @@ billingRouter.get('/', ensureLoggedIn(), function(req, res, next) {
     } else {
       res.render('billing/index', {
         title: "New Billing",
-        "bills": data
+        error: false,
+        success: false,
+        "bills": data,
+        "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
       });
     }
   })
 });
 
-billingRouter.post('/update', ensureLoggedIn('/login'), function(req, res, next) {
-  // TODO: move stripe key to environment variable
-  // TODO: Defensive programming
-  let _user = req.user;
-  // _user.stripeToken = req.body.stripeToken;
-  (async function() {
-    // Create a Customer with Stripe:
-    console.log("The Stripe Token = " + req.body.stripeToken);
+billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) => {
+  try {
+    let _user = req.user;
 
-    const customer = await stripe.customers.create({
-      source: req.body.stripeToken,
-      email: _user.email,
+    if(_user){
+      let bills = await Charge.find({
+        _owner: _user
+      });
+
+      console.log(_user.stripeCustomer.id);
+      // Create a Customer with Stripe:
+      console.log("The Stripe Token = " + req.body.stripeToken);
+      if(!_user.stripeCustomer) {
+        const customer = await stripe.customers.create({
+          source: req.body.stripeToken,
+          email: _user.email,
+        });
+
+        // Associate Stripe Customer with mongodb user
+        _user.stripeToken = req.body.stripeToken;
+        _user.stripeCustomer = customer;
+        //  Save and update User record
+        _user.save();
+
+        res.render('billing/index', {
+          success: "Card added successfully",
+          error: false,
+          "bills": bills,
+          "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
+        });
+
+      } else {
+        console.log('customer already exist :', _user.stripeCustomer);
+
+        let card_data = await stripe.tokens.retrieve(req.body.stripeToken);
+
+        let card_token = _user.stripeCustomer.sources.data.length ? await _.find(_user.stripeCustomer.sources.data, function (o) {
+            console.log(o.fingerprint , card_data.card.fingerprint);
+            if (o.fingerprint == card_data.card.fingerprint) {
+                return o;
+            }
+        }) : false;
+
+        console.log('card token =>', card_token);
+
+        if(!card_token) {
+          console.log(_user.stripeCustomer.id);
+          let create_card = await stripe.customers.createSource(_user.stripeCustomer.id, { source: req.body.stripeToken });
+
+          // old card removed
+          const delete_card = await stripe.customers.deleteCard(_user.stripeCustomer.id, _user.stripeCustomer.sources.data[0].id);
+
+          _user.stripeCustomer.sources.data[0] = create_card;
+          _user.stripeCustomer.default_source = create_card.id;
+          _user.save();
+
+          res.render('billing/index', {
+            success: "Card added successfully",
+            error: false,
+            "bills": bills,
+            "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
+          });
+
+        } else {
+          console.log('same card found');
+          res.render('billing/index', {
+            success: false,
+            error: "Same card can not be added twice",
+            "bills": bills,
+            "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : []
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.render('billing/index', {
+      error: error,
+      success: false,
+      "bills": [],
+      "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : []
     });
-
-    // Associate Stripe Customer with mongodb user
-    _user.stripeToken = req.body.stripeToken;
-    _user.stripeCustomer = customer;
-    //  Save and update User record
-    _user.save();
-    res.redirect('/billing');
-  })();
+  }
 });
 
 billingRouter.post('/charges/create', ensureLoggedIn(), function(req, res, next) {

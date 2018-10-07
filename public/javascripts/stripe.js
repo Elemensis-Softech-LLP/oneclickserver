@@ -1,3 +1,5 @@
+// require('dotenv').config();
+
 // // Create a Stripe client.
 // var stripe = Stripe(process.env.STRIPE_TEST_KEY);
 // // Create an instance of Elements.
@@ -72,7 +74,7 @@ function stripeTokenHandler(token) {
 
 
 
-var stripe = Stripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+var stripe = Stripe('pk_test_T6N5fYnCxvEJn3jMIptBsdTU');
 
 function registerElements(elements, exampleName) {
   var formClass = '.' + exampleName;
