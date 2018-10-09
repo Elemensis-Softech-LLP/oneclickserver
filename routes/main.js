@@ -5,6 +5,7 @@ const passport = require('passport');
 var nodemailer = require("nodemailer");
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const stripe = require("stripe")(process.env.STRIPE_TEST_KEY);
 
 const User = mongoose.model('User');
 const Masternode = mongoose.model('Masternode');
@@ -17,7 +18,7 @@ const {
 } = require('connect-ensure-login');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', ensureLoggedIn('/login'), function(req, res, next) {
   let _user = req.user;
   // console.log(req.user);
   Masternode.find({
@@ -31,7 +32,9 @@ router.get('/', function(req, res, next) {
       _masternodes = data;
       res.render('index', {
         title: 'Express',
-        "masternodes": _masternodes
+        "masternodes": _masternodes,
+        success: false,
+        error: false
       })
     }
   })
@@ -57,37 +60,70 @@ router.get('/success', function(req, res, next) {
   });
 })
 
-router.post('/deploy/masternode', function(req, res, next) {
+router.post('/deploy/masternode', ensureLoggedIn('/login'),function(req, res, next) {
   // TODO: Dynamically generate masternodeprivkey for user
   const masternodeprivkey = req.body.masternodeprivkey;
   const owner = req.user;
-  // console.log(owner.stripeCustomer.id)
+  console.log(owner);
   (async () => {
+    const masterNode = await Masternode.find({
+      "_owner": owner,
+    });
+
     const coin = await Coin.findOne({
       'coinTicker': "ANON"
     });
-    const plan = await Plan.findOne({
-      '_id': coin.plan
-    })
 
-    // console.log(plan.stripePlan.id)
-    const stripeSubscription = await stripe.subscriptions.create({
-      customer: owner.stripeCustomer.id,
-      items: [{
-        plan: plan.stripePlan.id
-      }]
-    })
+    if(coin._id){
+      res.render('index', {
+        title: 'Express',
+        "masternodes": masterNode,
+        success: false,
+        error: "You already have a subscription with this coin : ANON"
+      });
+    } else {
+      if(!owner.stripeCustomer){
+        console.log('no customer');
+        res.render('index', {
+          title: 'Express',
+          "masternodes": masterNode,
+          success: false,
+          error: "Customer doesn't have any card. Click on billing to add new."
+        });
+      } else {
+        if(!coin){
+          res.render('index', {
+            title: 'Express',
+            "masternodes": masterNode,
+            success: false,
+            error: "No coin found with ticker ANON"
+          });
+        } else {
+          const plan = await Plan.findOne({
+            '_id': coin.plan
+          })
 
-    const newMasternode = new Masternode({
-      masternodeprivkey: masternodeprivkey,
-      _owner: owner,
-      _coin: coin,
-      stripeSubscription: stripeSubscription
-    })
+          // console.log(plan.stripePlan.id)
+          const stripeSubscription = await stripe.subscriptions.create({
+            customer: owner.stripeCustomer.id,
+            items: [{
+              plan: plan.stripePlan.id
+            }]
+          })
 
-    newMasternode.save();
+          const newMasternode = new Masternode({
+            masternodeprivkey: masternodeprivkey,
+            _owner: owner,
+            _coin: coin,
+            stripeSubscription: stripeSubscription
+          })
+
+          newMasternode.save();
+          res.redirect('/');
+        }
+      }
+    }
   })();
-  res.redirect('/');
 });
 
 router.post('/deploy', ensureLoggedIn('/login'), function(req, res, next) {

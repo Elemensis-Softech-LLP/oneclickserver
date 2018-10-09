@@ -46,7 +46,7 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
         _owner: _user
       });
 
-      console.log(_user.stripeCustomer.id);
+      console.log(_user.stripeCustomer);
       // Create a Customer with Stripe:
       console.log("The Stripe Token = " + req.body.stripeToken);
       if(!_user.stripeCustomer) {
