@@ -62,68 +62,112 @@ router.get('/success', function(req, res, next) {
 
 router.post('/deploy/masternode', ensureLoggedIn('/login'),function(req, res, next) {
   // TODO: Dynamically generate masternodeprivkey for user
-  const masternodeprivkey = req.body.masternodeprivkey;
-  const owner = req.user;
-  console.log(owner);
-  (async () => {
-    const masterNode = await Masternode.find({
-      "_owner": owner,
-    });
-
-    const coin = await Coin.findOne({
-      'coinTicker': "ANON"
-    });
-
-    if(coin._id){
-      res.render('index', {
-        title: 'Express',
-        "masternodes": masterNode,
-        success: false,
-        error: "You already have a subscription with this coin : ANON"
+  try {
+    const masternodeprivkey = req.body.masternodeprivkey;
+    const owner = req.user;
+    (async () => {
+      const masterNode = await Masternode.find({
+        "_owner": owner,
       });
-    } else {
-      if(!owner.stripeCustomer){
-        console.log('no customer');
-        res.render('index', {
-          title: 'Express',
-          "masternodes": masterNode,
-          success: false,
-          error: "Customer doesn't have any card. Click on billing to add new."
-        });
+
+      const coin = await Coin.findOne({
+        'coinTicker': "ANON",
+        _user: owner
+      });
+
+      console.log(masterNode);
+
+
+      if(masterNode.length){
+          if(coin) {
+            const masterNodesExist = await Masternode.find({
+              "_owner": owner,
+              _coin : coin._id
+            });
+            if(masterNodesExist.length) {
+              res.render('index', {
+                title: 'Express',
+                "masternodes": masterNode,
+                success: false,
+                error: "You already have a subscription with this coin : ANON"
+              });
+            } else {
+              console.log('not supported multiple coin subscription');
+            }
+          } else {
+            res.render('index', {
+              title: 'Express',
+              "masternodes": masterNode,
+              success: false,
+              error: "No coin found with ticker ANON"
+            });
+          }
       } else {
-        if(!coin){
+        console.log('no data masterNode');
+        if(!owner.stripeCustomer){
+          console.log('no customer');
           res.render('index', {
             title: 'Express',
             "masternodes": masterNode,
             success: false,
-            error: "No coin found with ticker ANON"
+            error: "Customer doesn't have any card. Click on billing to add new."
           });
         } else {
-          const plan = await Plan.findOne({
-            '_id': coin.plan
-          })
+          if(!coin){
+            res.render('index', {
+              title: 'Express',
+              "masternodes": masterNode,
+              success: false,
+              error: "No coin found with ticker ANON"
+            });
+          } else {
+            const plan = await Plan.findOne({
+              '_id': coin.plan
+            })
 
-          // console.log(plan.stripePlan.id)
-          const stripeSubscription = await stripe.subscriptions.create({
-            customer: owner.stripeCustomer.id,
-            items: [{
-              plan: plan.stripePlan.id
-            }]
-          })
+            // console.log(plan.stripePlan.id)
+            const stripeSubscription = await stripe.subscriptions.create({
+              customer: owner.stripeCustomer.id,
+              items: [{
+                plan: plan.stripePlan.id
+              }]
+            })
+            console.log('stripeSubscription');
 
-          const newMasternode = new Masternode({
-            masternodeprivkey: masternodeprivkey,
-            _owner: owner,
-            _coin: coin,
-            stripeSubscription: stripeSubscription
-          })
+            const stripeInvoices = await stripe.invoices.list({
+              limit: 5 ,
+              customer: owner.stripeCustomer.id,
+              subscription: stripeSubscription.id
+            });
 
-          newMasternode.save();
-          res.redirect('/');
+            // const stripeUpcomingInvoices = await stripe.invoices.retrieveUpcoming({
+            //   customer: owner.stripeCustomer.id,
+            //   subscription: stripeSubscription.id
+            // });
+
+            console.log('Invoice'+ stripeInvoices);
+            // console.log('Upcoming Invoices'+ stripeUpcomingInvoices);
+
+
+            const newMasternode = new Masternode({
+              masternodeprivkey: masternodeprivkey,
+              _owner: owner,
+              _coin: coin,
+              stripeSubscription: stripeSubscription,
+              stripeInvoices: stripeInvoices,
+              // stripeUpcomingInvoices: stripeUpcomingInvoices
+            })
+
+            newMasternode.save();
+            res.redirect('/');
+          }
         }
       }
-    }
-  })();
+    })();
+  } catch (error) {
+    console.log(error);
+    res.render('error')
+  }
 });
 
 router.post('/deploy', ensureLoggedIn('/login'), function(req, res, next) {

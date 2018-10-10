@@ -19,6 +19,12 @@ const masternodeSchema = new Schema({
   },
   stripeSubscription: {
     type: Object
+  },
+  stripeInvoices:{
+    type: Object
+  },
+  stripeUpcomingInvoices:{
+    type: Object
   }
 }, {
   timestamps: {
