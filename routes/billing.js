@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const Charge = mongoose.model('Charge');
 const User = mongoose.model('User');
+const Masternode = mongoose.model('Masternode');
 const stripe = require("stripe")(process.env.STRIPE_TEST_KEY);
 const _ = require('lodash');
 
@@ -16,25 +17,37 @@ const {
 } = require('connect-ensure-login');
 
 
-billingRouter.get('/', ensureLoggedIn('/login'), function(req, res, next) {
-  let _user = req.user;
+billingRouter.get('/', ensureLoggedIn('/login'), async (req, res, next) => {
+  try {
+    let _user = req.user;
+    let invoices = await Masternode.findOne({
+      "_owner": _user,
+    },{'stripeInvoices':1});
 
-  Charge.find({
-    _owner: _user
-  }, function(err, data) {
-    if (err) {
-      console.log("There's been an error");
-      res.render('error');
-    } else {
-      res.render('billing/index', {
-        title: "New Billing",
-        error: false,
-        success: false,
-        "bills": data,
-        "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
-      });
-    }
-  })
+    // let data = await Charge.find({
+    //   _owner: _user
+    // });
+
+    console.log(invoices.stripeInvoices);
+
+    res.render('billing/index', {
+      title: "New Billing",
+      error: false,
+      success: false,
+      // "bills": data,
+      "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
+      "bills": invoices ? invoices.stripeInvoices.data : false,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.render('billing/index', {
+      error: error,
+      success: false,
+      "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : [],
+      "bills": [],
+    });
+  }
 });
 
 billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) => {
@@ -42,9 +55,13 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
     let _user = req.user;
 
     if(_user){
-      let bills = await Charge.find({
-        _owner: _user
-      });
+      // let bills = await Charge.find({
+      //   _owner: _user
+      // });
+
+      let invoices = await Masternode.findOne({
+        "_owner": _user,
+      },{'stripeInvoices':1});
 
       console.log(_user.stripeCustomer);
       // Create a Customer with Stripe:
@@ -64,8 +81,9 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
         res.render('billing/index', {
           success: "Card added successfully",
           error: false,
-          "bills": bills,
-          "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
+          // "bills": bills,
+          "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
+          "bills": invoices ? invoices.stripeInvoices.data : false,
         });
 
       } else {
@@ -96,8 +114,9 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
           res.render('billing/index', {
             success: "Card added successfully",
             error: false,
-            "bills": bills,
-            "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : []
+            // "bills": bills,
+            "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
+            "bills": invoices ? invoices.stripeInvoices.data : false,
           });
 
         } else {
@@ -105,8 +124,9 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
           res.render('billing/index', {
             success: false,
             error: "Same card can not be added twice",
-            "bills": bills,
-            "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : []
+            // "bills": bills,
+            "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : [],
+            "bills": invoices ? invoices.stripeInvoices.data : false,
           });
         }
       }
@@ -116,8 +136,8 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
     res.render('billing/index', {
       error: error,
       success: false,
-      "bills": [],
-      "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : []
+      "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : [],
+      bills: []
     });
   }
 });

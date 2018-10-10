@@ -82,7 +82,7 @@
     </div>
   <% } %>
 
-  <div class="container mt-5">
+  <div class="container mt-5 ">
     <div class="cell example example4">
       <form action="/billing/update" method="post" id="payment-form">
         <div id="example4-paymentRequest">
@@ -106,7 +106,7 @@
   <%if (cards.length > 0) { %>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-8">
+      <div class="col-12">
         <h1 class="h3 mb-3 font-weight-normal" style="text-align:center;margin-top:50px">Card Details</h1>
         <table class="table">
           <thead>
@@ -140,24 +140,40 @@
 
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-8">
+      <div class="col-12">
         <h1 class="h3 mb-3 font-weight-normal" style="text-align:center;margin-top:50px">Bill History</h1>
         <%if (bills.length > 0) { %>
         <table class="table">
           <thead>
             <tr>
+              <th scope="col">Name</th>
               <th scope="col">Date</th>
-              <th scope="col">Bill</th>
+              <th scope="col">Period Start</th>
+              <th scope="col">Period End</th>
+              <th scope="col">Total Amount</th>
+              <th scope="col">Paid Amount</th>
             </tr>
           </thead>
           <tbody>
             <% bills.forEach(function (bill) { %>
             <tr>
               <td>
-                <%= bill._stripeCharge.created %>
+                <%= bill.lines.data[0].plan.nickname %>
               </td>
               <td>
-                <%= bill._stripeCharge.amount %>
+                <%= (new Date(bill.date * 1000)).toDateString()  %>
+              </td>
+              <td>
+                <%= (new Date(bill.lines.data[0].period.start * 1000)).toDateString() %>
+              </td>
+              <td>
+                <%= (new Date(bill.lines.data[0].period.end * 1000)).toDateString()  %>
+              </td>
+              <td>
+                $<%= Math.floor(bill.total / 1e2) %>
+              </td>
+              <td>
+                $<%= Math.floor(bill.amount_paid / 1e2) %>
               </td>
             </tr>
             <% }) %>
