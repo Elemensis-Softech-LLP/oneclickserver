@@ -36,7 +36,7 @@ billingRouter.get('/', ensureLoggedIn('/login'), async (req, res, next) => {
       success: false,
       // "bills": data,
       "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
-      "bills": invoices ? invoices.stripeInvoices.data : false,
+      "bills": invoices.stripeInvoices ? invoices.stripeInvoices.data : false,
     });
 
   } catch (error) {
@@ -83,7 +83,7 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
           error: false,
           // "bills": bills,
           "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
-          "bills": invoices ? invoices.stripeInvoices.data : false,
+          "bills": invoices.stripeInvoices ? invoices.stripeInvoices.data : false,
         });
 
       } else {
@@ -116,7 +116,7 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
             error: false,
             // "bills": bills,
             "cards": _user.stripeCustomer ? _user.stripeCustomer.sources.data : [],
-            "bills": invoices ? invoices.stripeInvoices.data : false,
+            "bills": invoices.stripeInvoices ? invoices.stripeInvoices.data : false,
           });
 
         } else {
@@ -126,7 +126,7 @@ billingRouter.post('/update', ensureLoggedIn('/login'), async (req, res, next) =
             error: "Same card can not be added twice",
             // "bills": bills,
             "cards": req.user.stripeCustomer ? req.user.stripeCustomer.sources.data : [],
-            "bills": invoices ? invoices.stripeInvoices.data : false,
+            "bills": invoices.stripeInvoices ? invoices.stripeInvoices.data : false,
           });
         }
       }
