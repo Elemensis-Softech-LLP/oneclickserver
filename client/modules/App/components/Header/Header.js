@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 //   DropdownItem
 // } from 'reactstrap';
 // Import Style
-import styles from './Header.css';
+// import styles from './Header.css';
 
 export class Header extends React.Component {
   constructor(props) {
@@ -37,16 +37,14 @@ export class Header extends React.Component {
   render() {
     return (
 
-      <div className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+      <div className="navbar fixed-top  d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
         <h5 className="my-0 mr-md-auto font-weight-normal">OneClickServer</h5>
-        <nav className="my-2 my-md-0 mr-md-3">
+        <nav className="my-2 my-md-0 mr-md-3 ">
           <a className="p-2 text-dark" href="/">Home</a>
           <a className="p-2 text-dark" href="#">Products</a>
           <a className="p-2 text-dark" href="#">Plans</a>
           <a className="p-2 text-dark" href="#">Coins</a>
-          <a className="p-2 text-dark" href="/login">Login</a>
           <a className="p-2 text-dark" href="#">Logout</a>
-          <a className="p-2 text-dark" href="#">Sign up</a>
         </nav>
       </div>
     );

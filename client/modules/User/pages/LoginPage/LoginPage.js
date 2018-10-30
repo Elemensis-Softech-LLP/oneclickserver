@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Login from '../../components/Login/Login';
 
 // Import Actions
-import { loginUserRequest } from '../../LoginActions';
+import { loginUserRequest } from '../../UserActions';
 // import { toggleAddPost } from '../../../App/AppActions';
 
 // Import Selectors
