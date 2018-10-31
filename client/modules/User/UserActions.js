@@ -1,25 +1,75 @@
+import jwtDecode from 'jwt-decode';
 import callApi from '../../util/apiCaller';
+import setAuthToken from '../../util/setAuthToken';
 
 // Export Constants
-export const LOGIN_USER = 'LOGIN_USER';
+export const GET_ERRORS = 'GET_ERRORS';
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+export const CLEAR_CURRENT_PROFILE = 'CLEAR_CURRENT_PROFILE';
 
-
-// Export Actions
-export function loginUser(post) {
+export function registerUser(payload) {
   return {
-    type: LOGIN_USER,
-    post,
+    type: GET_ERRORS,
+    payload,
   };
 }
 
+export const clearCurrentProfile = () => {
+  return {
+    type: CLEAR_CURRENT_PROFILE,
+  };
+};
+
+export const loginUser = decoded => {
+  return {
+    type: SET_CURRENT_USER,
+    payload: decoded,
+  };
+};
+
 export function loginUserRequest(post) {
   return (dispatch) => {
-    return callApi('posts', 'post', {
+    return callApi('users/login', 'post', {
       post: {
         name: post.name,
         title: post.title,
         content: post.content,
       },
-    }).then(res => dispatch(loginUser(res.post)));
+    })
+    .then(res => {
+      const { token } = res.data;
+      localStorage.setItem('jwtToken', token);
+      setAuthToken(token);
+
+      const decoded = jwtDecode(token);
+
+      dispatch(loginUser(decoded));
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      })
+    );
   };
 }
+
+export function registerUserRequest(userData) {
+  return (dispatch) => {
+    return callApi('users/register', 'post', userData)
+      .then(res => dispatch(registerUser(res.data)))
+      .catch(err =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        })
+      );
+  };
+}
+
+export const logoutUser = () => dispatch => {
+  localStorage.removeItem('jwtToken');
+  setAuthToken(false);
+
+  dispatch(loginUser({}));
+};

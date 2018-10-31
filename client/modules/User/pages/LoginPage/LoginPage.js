@@ -7,60 +7,74 @@ import Login from '../../components/Login/Login';
 
 // Import Actions
 import { loginUserRequest } from '../../UserActions';
-// import { toggleAddPost } from '../../../App/AppActions';
-
-// Import Selectors
-// import { getShowAddPost } from '../../../App/AppReducer';
-// import { getPosts } from '../../LoginReducer';
 
 class LoginPage extends Component {
-  componentDidMount() {
-    // this.props.dispatch(fetchPosts());
+  constructor() {
+    super();
+    this.state = {
+      email: '',
+      password: '',
+      errors: {},
+    };
+
+    // this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  // handleDeletePost = post => {
-  //   if (confirm('Do you want to delete this post')) { // eslint-disable-line
-  //     this.props.dispatch(deletePostRequest(post));
-  //   }
-  // };
+  componentDidMount() {
+    console.log('componentDidMount', this.props.auth);
+    if (this.props.auth.isAuthenticated) {
+      // this.props.history.push('/');
+    }
+  }
 
-  handleAddPost = (name, title, content) => {
-    // this.props.dispatch(toggleAddPost());
-    this.props.dispatch(loginUserRequest({ name, title, content }));
-  };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      // this.props.history.push('/');
+    }
+
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors,
+      });
+    }
+  }
+
+  // onChange(e) {
+  //   this.setState({ [e.target.name]: e.target.value });
+  // }
+
+  onSubmit(e) {
+    e.preventDefault();
+    const userData = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    this.props.loginUserRequest(userData);
+  }
 
   render() {
     return (
       <div>
-        <Login />
+        <Login auth={this.onSubmit} errors={this.props.errors} />
       </div>
     );
   }
 }
 
-// Actions required to provide data for this component to render in sever side.
-// LoginPage.need = [() => { return fetchPosts(); }];
+LoginPage.propTypes = {
+  loginUserRequest: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+};
 
-// Retrieve data from store as props
+
 function mapStateToProps(state) {
   return {
-    // showAddPost: getShowAddPost(state),
-    // posts: getPosts(state),
+    auth: state.auth,
+    errors: state.errors,
   };
 }
 
-LoginPage.propTypes = {
-  // posts: PropTypes.arrayOf(PropTypes.shape({
-  //   name: PropTypes.string.isRequired,
-  //   title: PropTypes.string.isRequired,
-  //   content: PropTypes.string.isRequired,
-  // })).isRequired,
-  // showAddPost: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
-
-LoginPage.contextTypes = {
-  router: PropTypes.object,
-};
-
-export default connect(mapStateToProps)(LoginPage);
+export default connect(mapStateToProps, { loginUserRequest })(LoginPage);

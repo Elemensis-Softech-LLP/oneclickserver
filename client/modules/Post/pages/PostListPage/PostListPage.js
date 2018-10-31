@@ -14,6 +14,7 @@ import { toggleAddPost } from '../../../App/AppActions';
 import { getShowAddPost } from '../../../App/AppReducer';
 import { getPosts } from '../../PostReducer';
 
+
 class PostListPage extends Component {
   componentDidMount() {
     this.props.dispatch(fetchPosts());

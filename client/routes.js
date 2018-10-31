@@ -34,6 +34,7 @@ export default (
       }}
     />
     <Route
+      exact
       path="/login"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
@@ -41,7 +42,9 @@ export default (
         });
       }}
     />
+
     <Route
+      exact
       path="/signup"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
@@ -50,6 +53,7 @@ export default (
       }}
     />
     <Route
+      exact
       path="/post/:slug-:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {

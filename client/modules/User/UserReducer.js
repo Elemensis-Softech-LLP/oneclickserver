@@ -1,14 +1,20 @@
 // Import Actions
-import { LOGIN_USER } from './UserActions';
+import { SET_CURRENT_USER } from './UserActions';
+import isEmpty from '../../validation/is-empty.js';
 
 // Initial State
-const initialState = { data: [] };
+const initialState = {
+  isAuthenticated: false,
+  user: {},
+};
 
 const UserReducer = (state = initialState, action) => {
   switch (action.type) {
-    case LOGIN_USER :
+    case SET_CURRENT_USER:
       return {
-        data: [action.post, ...state.data],
+        ...state,
+        isAuthenticated: !isEmpty(action.payload),
+        user: action.payload,
       };
 
     default:
