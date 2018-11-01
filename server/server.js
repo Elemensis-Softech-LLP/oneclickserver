@@ -41,11 +41,12 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import Helmet from 'react-helmet';
+const passport = require('passport');
 
 // Import required modules
 import routes from '../client/routes';
 import { fetchComponentData } from './util/fetchData';
-import posts from './routes/post.routes';
+import route from './routes';
 import dummyData from './dummyData';
 import serverConfig from './config';
 
@@ -65,12 +66,15 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
+app.use(passport.initialize());
+require('./passport.js')(passport);
+
 // Apply body Parser and server public assets and routes
 app.use(compression());
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../dist/client')));
-app.use('/api', posts);
+app.use('/api', route);
 
 // Render Initial HTML
 const renderFullPage = (html, initialState) => {

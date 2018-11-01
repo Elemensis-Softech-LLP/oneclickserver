@@ -17,11 +17,11 @@ function Login(props) {
       <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
       <FormGroup className="text-left">
         <Label for="exampleEmail">Email</Label>
-        <Input type="email" name="email" id="exampleEmail" placeholder="with a placeholder" />
+        <Input type="email" name="email" value={props.data.email} id="exampleEmail" onChange={props.change} placeholder="Email Address" />
       </FormGroup>
       <FormGroup className="text-left">
         <Label for="examplePassword">Password</Label>
-        <Input type="password" name="password" id="examplePassword" placeholder="password placeholder" />
+        <Input type="password" name="password" value={props.data.password} onChange={props.change} id="examplePassword" placeholder="Password" />
       </FormGroup>
 
       <Link to="/" color="link" className="float-right mb-2 alert-link text-right">
@@ -44,6 +44,8 @@ function Login(props) {
 Login.propTypes = {
   errors: PropTypes.object,
   auth: PropTypes.func,
+  data: PropTypes.object,
+  change: PropTypes.func,
 };
 
 export default Login;

@@ -17,7 +17,7 @@ class LoginPage extends Component {
       errors: {},
     };
 
-    // this.onChange = this.onChange.bind(this);
+    this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -40,9 +40,9 @@ class LoginPage extends Component {
     }
   }
 
-  // onChange(e) {
-  //   this.setState({ [e.target.name]: e.target.value });
-  // }
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
 
   onSubmit(e) {
     e.preventDefault();
@@ -50,14 +50,14 @@ class LoginPage extends Component {
       email: this.state.email,
       password: this.state.password,
     };
-
+    console.log(userData);
     this.props.loginUserRequest(userData);
   }
 
   render() {
     return (
       <div>
-        <Login auth={this.onSubmit} errors={this.props.errors} />
+        <Login auth={this.onSubmit} change={this.onChange} data={this.state} errors={this.props.errors} />
       </div>
     );
   }

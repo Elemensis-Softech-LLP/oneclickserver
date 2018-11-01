@@ -27,15 +27,9 @@ export const loginUser = decoded => {
   };
 };
 
-export function loginUserRequest(post) {
+export function loginUserRequest(userData) {
   return (dispatch) => {
-    return callApi('users/login', 'post', {
-      post: {
-        name: post.name,
-        title: post.title,
-        content: post.content,
-      },
-    })
+    return callApi('users/login', 'post', userData)
     .then(res => {
       const { token } = res.data;
       localStorage.setItem('jwtToken', token);
@@ -45,11 +39,12 @@ export function loginUserRequest(post) {
 
       dispatch(loginUser(decoded));
     })
-    .catch(err =>
+    .catch(err => {
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data,
-      })
+        payload: err,
+      });
+    }
     );
   };
 }
