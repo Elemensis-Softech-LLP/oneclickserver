@@ -6,22 +6,22 @@ export const API_URL = (typeof window === 'undefined' || process.env.NODE_ENV ==
   '/api';
 
 export default function callApi(endpoint, method = 'get', body) {
-  console.log(endpoint, method, body);
   return axios({
     url: `${API_URL}/${endpoint}`,
     headers: { 'content-type': 'application/json' },
     method,
     data: body,
   })
-  .then(response => response)
-  .then((response) => {
+  .then(response => {
     if (response.statusText !== 'OK') {
       return Promise.reject(response);
     }
     return response.data;
   })
-  .then(
-    response => response,
-    error => error
-  );
+  .catch(error => {
+    if (error.response) {
+      return Promise.reject(error.response);
+    }
+    return Promise.reject(error);
+  });
 }

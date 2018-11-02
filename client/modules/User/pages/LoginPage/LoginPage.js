@@ -22,20 +22,20 @@ class LoginPage extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount', this.props.auth);
+    console.log('componentDidMount', this.props.auth); /* eslint no-console: 0 */
     if (this.props.auth.isAuthenticated) {
-      // this.props.history.push('/');
+      this.context.router.history.push('/');
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
-      // this.props.history.push('/');
+      this.context.router.history.push('/home');
     }
 
     if (nextProps.errors) {
       this.setState({
-        errors: nextProps.errors,
+        errors: nextProps.errors.data,
       });
     }
   }
@@ -50,14 +50,13 @@ class LoginPage extends Component {
       email: this.state.email,
       password: this.state.password,
     };
-    console.log(userData);
     this.props.loginUserRequest(userData);
   }
 
   render() {
     return (
       <div>
-        <Login auth={this.onSubmit} change={this.onChange} data={this.state} errors={this.props.errors} />
+        <Login auth={this.onSubmit} change={this.onChange} errors={this.state} />
       </div>
     );
   }
@@ -76,5 +75,9 @@ function mapStateToProps(state) {
     errors: state.errors,
   };
 }
+
+LoginPage.contextTypes = {
+  router: PropTypes.object,
+};
 
 export default connect(mapStateToProps, { loginUserRequest })(LoginPage);

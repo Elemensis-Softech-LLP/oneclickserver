@@ -1,9 +1,10 @@
 import User from '../models/user';
+import serverConfig from '../config';
 
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const keys = require('../config.js');
+
 const validateRegisterInput = require('../validation/register.js');
 const validateLoginInput = require('../validation/login.js');
 
@@ -81,7 +82,7 @@ export function loginUser(req, res) {
 
             jwt.sign(
               payload,
-              keys.secretOrKey,
+              serverConfig.secretOrKey,
               { expiresIn: 360000 },
               (err, token) => {
                 res.json({

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import App from './modules/App/App';
+// import PrivateRoute from './components/private-route/PrivateRoute.js';
 
 // require.ensure polyfill for node
 if (typeof require.ensure !== 'function') {
@@ -61,5 +62,20 @@ export default (
         });
       }}
     />
+    <Route
+      exact
+      path="/not-found"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./components/not-found/NotFound').default);
+        });
+      }}
+    />
+
   </Route>
 );
+
+
+    // <Switch>
+    //   <PrivateRoute exact path="/home" component={Dashboard} />
+    // </Switch>

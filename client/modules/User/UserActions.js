@@ -27,16 +27,16 @@ export const loginUser = decoded => {
   };
 };
 
+
 export function loginUserRequest(userData) {
   return (dispatch) => {
     return callApi('users/login', 'post', userData)
     .then(res => {
-      const { token } = res.data;
+      const { token } = res;
       localStorage.setItem('jwtToken', token);
       setAuthToken(token);
-
       const decoded = jwtDecode(token);
-
+      console.log(decoded);
       dispatch(loginUser(decoded));
     })
     .catch(err => {
@@ -49,14 +49,14 @@ export function loginUserRequest(userData) {
   };
 }
 
-export function registerUserRequest(userData) {
+export function registerUserRequest(userData, history) {
   return (dispatch) => {
     return callApi('users/register', 'post', userData)
-      .then(res => dispatch(registerUser(res.data)))
+      .then(res => history.push('/login')) /* eslint no-unused-vars: 0 */
       .catch(err =>
         dispatch({
           type: GET_ERRORS,
-          payload: err.response.data,
+          payload: err,
         })
       );
   };

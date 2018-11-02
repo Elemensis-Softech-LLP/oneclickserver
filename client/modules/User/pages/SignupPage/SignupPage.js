@@ -6,61 +6,73 @@ import { connect } from 'react-redux';
 import Signup from '../../components/Signup/Signup';
 
 // Import Actions
-import { loginUserRequest } from '../../UserActions';
-// import { toggleAddPost } from '../../../App/AppActions';
-
-// Import Selectors
-// import { getShowAddPost } from '../../../App/AppReducer';
-// import { getPosts } from '../../LoginReducer';
+import { registerUserRequest } from '../../UserActions';
 
 class SignupPage extends Component {
-  componentDidMount() {
-    // this.props.dispatch(fetchPosts());
+  constructor() {
+    super();
+    this.state = {
+      name: '',
+      email: '',
+      password: '',
+      password2: '',
+      errors: {},
+    };
+
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  // handleDeletePost = post => {
-  //   if (confirm('Do you want to delete this post')) { // eslint-disable-line
-  //     this.props.dispatch(deletePostRequest(post));
-  //   }
-  // };
+  componentDidMount() {
+    console.log('componentDidMount', this.props.auth); /* eslint no-console: 0 */
+    if (this.props.auth.isAuthenticated) {
+      this.context.history.push('/home');
+    }
+  }
 
-  handleAddPost = (name, title, content) => {
-    // this.props.dispatch(toggleAddPost());
-    this.props.dispatch(loginUserRequest({ name, title, content }));
-  };
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors.data });
+    }
+  }
+
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+    const newUser = {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+      password2: this.state.password2,
+    };
+
+    this.props.registerUserRequest(newUser, this.context.history);
+  }
 
   render() {
     return (
       <div>
-        <Signup />
+        <Signup auth={this.onSubmit} change={this.onChange} errors={this.state} />
       </div>
     );
   }
 }
 
-// Actions required to provide data for this component to render in sever side.
-// LoginPage.need = [() => { return fetchPosts(); }];
+SignupPage.propTypes = {
+  registerUserRequest: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+};
 
-// Retrieve data from store as props
+
 function mapStateToProps(state) {
   return {
-    // showAddPost: getShowAddPost(state),
-    // posts: getPosts(state),
+    auth: state.auth,
+    errors: state.errors,
   };
 }
 
-SignupPage.propTypes = {
-  // posts: PropTypes.arrayOf(PropTypes.shape({
-  //   name: PropTypes.string.isRequired,
-  //   title: PropTypes.string.isRequired,
-  //   content: PropTypes.string.isRequired,
-  // })).isRequired,
-  // showAddPost: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
-
-SignupPage.contextTypes = {
-  router: PropTypes.object,
-};
-
-export default connect(mapStateToProps)(SignupPage);
+export default connect(mapStateToProps, { registerUserRequest })(SignupPage);
