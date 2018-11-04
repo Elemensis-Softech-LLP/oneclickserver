@@ -100,6 +100,7 @@ function Login(props) {
         <Paper className={classes.paper}>
           <Avatar className={classes.avatar}>
             <LockIcon />
+            // <img className="mb-4" src={logo} alt="" width="72" height="72" />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
@@ -139,10 +140,14 @@ function Login(props) {
               />
             </FormControl>
             <FormControlLabel
+              style={{ float: 'left' }}
               className={classes.marginLeft}
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            <Link to="/" color="link" style={{ float: 'right', marginTop: '15px' }} className="float-right mb-2 alert-link text-right">
+              Forgot Password?
+            </Link>
             <Button
               type="submit"
               fullWidth
@@ -152,6 +157,7 @@ function Login(props) {
             >
               Sign in
             </Button>{' '}
+
           </form>
         </Paper>
       </main>
@@ -166,5 +172,6 @@ Login.propTypes = {
   data: PropTypes.object,
   change: PropTypes.func,
 };
+
 
 export default withStyles(styles)(Login);

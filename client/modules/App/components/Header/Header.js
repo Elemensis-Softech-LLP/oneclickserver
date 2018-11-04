@@ -99,9 +99,14 @@ class Header extends Component {
     );
 
     const guestLinks = (
-      <Button color="primary" variant="outlined">
-        <Link to="/login">Login</Link>
-      </Button>
+      <div>
+        <Button color="primary" variant="outlined">
+          <Link to="/login">Login</Link>
+        </Button>
+        <Button color="primary" variant="outlined">
+          <Link to="/signup">Signup</Link>
+        </Button>
+      </div>
     );
 
     return (

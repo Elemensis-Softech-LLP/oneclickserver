@@ -1,19 +1,61 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
-// import { Alert, Button, Form, FormGroup, FormText, Label, Input } from 'reactstrap';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControl from '@material-ui/core/FormControl';
+import Checkbox from '@material-ui/core/Checkbox';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import LockIcon from '@material-ui/icons/LockOutlined';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Messages from '../../../../components/Messages';
 
-// Import Style
-import styles from '../Login/Login.css';
 import logo from './anon.png';
 
-
-// Import Components
+const styles = theme => ({
+  layout: {
+    width: 'auto',
+    display: 'block', // Fix IE 11 issue.
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  },
+  paper: {
+    marginTop: theme.spacing.unit * 8,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
+  avatar: {
+    margin: theme.spacing.unit,
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing.unit,
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3,
+  },
+  margin: {
+    margin: theme.spacing.unit,
+  },
+});
 
 function Signup(props) {
+  const { classes } = props;
   const { errors } = props.errors;
   return (
-    <div></div>
+
     // <Form className={styles['form-signin']} onSubmit={props.auth}>
     //   <img className="mb-4" src={logo} alt="" width="72" height="72" />
     //   <h1 className="h3 mb-3 font-weight-normal">Registration</h1>
@@ -50,20 +92,110 @@ function Signup(props) {
     //
     //   <FormText color="muted">
     //       Already registered ?
-    //     <Link to="/login" className="alert-link ml-1">
-    //         Login
+    //     <Link to="/Signup" className="alert-link ml-1">
+    //         Signup
     //     </Link>
     //   </FormText>
     //
     // </Form>
+
+    <React.Fragment>
+      <CssBaseline />
+      <main className={classes.layout}>
+        <Paper className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockIcon />
+            // <img className="mb-4" src={logo} alt="" width="72" height="72" />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          {
+           errors && <span>
+           {
+             errors.email && <Messages
+               variant="error"
+               className={classes.margin}
+               message={errors.email}
+             />
+           }
+           {
+             errors.name && <Messages
+               variant="error"
+               className={classes.margin}
+               message={errors.name}
+             />
+           }
+           {
+             errors.password && <Messages
+               variant="error"
+               className={classes.margin}
+               message={errors.password}
+             />
+           }
+           {
+             errors.password2 && !errors.password && <Messages
+               variant="error"
+               className={classes.margin}
+               message={errors.password2}
+             />
+           }
+           </span>
+         }
+
+          <form className={classes.form} onSubmit={props.auth}>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="name">Email Address</InputLabel>
+              <Input id="name" name="name" autoComplete="name" autoFocus onChange={props.change} />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="email">Email Address</InputLabel>
+              <Input id="email" name="email" autoComplete="email" autoFocus onChange={props.change} />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <Input
+                name="password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={props.change}
+              />
+            </FormControl>
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="password2">Confirm Password</InputLabel>
+              <Input
+                name="password2"
+                type="password"
+                id="password2"
+                autoComplete="current-password"
+                onChange={props.change}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Signup
+            </Button>{' '}
+
+          </form>
+        </Paper>
+      </main>
+    </React.Fragment>
   );
 }
 
 Signup.propTypes = {
+  classes: PropTypes.object.isRequired,
   errors: PropTypes.object,
   auth: PropTypes.func,
   data: PropTypes.object,
   change: PropTypes.func,
 };
 
-export default Signup;
+
+export default withStyles(styles)(Signup);
