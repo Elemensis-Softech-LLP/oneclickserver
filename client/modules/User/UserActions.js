@@ -14,6 +14,14 @@ export function registerUser(payload) {
   };
 }
 
+export const setCurrentUser = decoded => {
+  return {
+    type: SET_CURRENT_USER,
+    payload: decoded,
+  };
+};
+
+
 export const clearCurrentProfile = () => {
   return {
     type: CLEAR_CURRENT_PROFILE,
@@ -37,7 +45,7 @@ export function loginUserRequest(userData) {
       setAuthToken(token);
       const decoded = jwtDecode(token);
       console.log(decoded);
-      dispatch(loginUser(decoded));
+      dispatch(setCurrentUser(decoded));
     })
     .catch(err => {
       dispatch({
@@ -66,5 +74,5 @@ export const logoutUser = () => dispatch => {
   localStorage.removeItem('jwtToken');
   setAuthToken(false);
 
-  dispatch(loginUser({}));
+  dispatch(setCurrentUser({}));
 };

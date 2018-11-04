@@ -6,7 +6,6 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import App from './App';
 import { configureStore } from './store';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Initialize store
 const store = configureStore(window.__INITIAL_STATE__);

@@ -24,13 +24,13 @@ class LoginPage extends Component {
   componentDidMount() {
     console.log('componentDidMount', this.props.auth); /* eslint no-console: 0 */
     if (this.props.auth.isAuthenticated) {
-      this.context.router.history.push('/');
+      this.context.router.push('/home');
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
-      this.context.router.history.push('/home');
+      this.context.router.push('/home');
     }
 
     if (nextProps.errors) {

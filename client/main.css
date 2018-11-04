@@ -1,92 +1,83 @@
-/*
-  Global CSS file
-*/
-*{
-	margin: 0;
-	padding: 0;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	line-height: normal;
-}
+/*@import './theme/colors';*/
 
-::-webkit-input-placeholder {
-	color:#aaa;
-	font-weight: 300;
-}
-::-moz-placeholder {
-	color:#aaa;
-	font-weight: 300;
-}
-:-ms-input-placeholder {
-	color:#aaa;
-	font-weight: 300;
-}
-input:-moz-placeholder {
-	color:#aaa;
-	font-weight: 300;
+/* *************** General *************** */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: normal;
 }
 
 body {
-	background: #FFF;
-	font-family: 'Lato', sans-serif;
-	font-size: 16px;
-}
-
-
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+  background: #FFF;
+  color: #555;
+  font-size: 16px;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 .container {
-  max-width: 960px;
-}
-
-.pricing-header {
-  max-width: 700px;
-}
-
-.card-deck .card {
-  min-width: 220px;
-}
-
-/* Login styles */
-body {
-  text-align: center!important;
-}
-
-.form-signin {
+  max-width: 980px;
   width: 100%;
-  max-width: 330px;
   padding: 15px;
-  margin: auto;
-  margin-top: 50px;
+  margin: 0 auto;
+  min-height: calc(100vh - 150px);
 }
-.form-signin .checkbox {
+
+/* *************** Strips *************** */
+.strip {
+  width: 100%;
+  min-height: calc(100vh - 150px);
+  padding: 5%;
+}
+
+/* *************** Images *************** */
+.background_mountain {
+  background-image: url("./images/mountains.jpg") !important;
+  background-repeat: no-repeat;
+  background-size: cover;
+ }
+
+/* *************** Fonts *************** */
+.title {
+  font-size: 400%;
+}
+
+h1 {
+  color: #424242;
   font-weight: 400;
-}
-.form-signin .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
-}
-.form-signin .form-control:focus {
-  z-index: 2;
-}
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
+  margin-top: 10px;
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+}
+
+h2 {
+  color: #424242;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  color: #424242;
+  font-weight: 300;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #424242;
+  margin: 2px 0px 2px 0px;
+  font-weight: 300;
+}
+
+.text_center {
+  text-align: center;
+}
+
+.text_white {
+  color: #ffffff !important;
+}
+
+/* *************** Links *************** */
+a:link {
+  text-decoration: none;
 }

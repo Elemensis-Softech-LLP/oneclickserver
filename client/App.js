@@ -1,10 +1,13 @@
 /**
  * Root Component
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { createMuiTheme } from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
 import IntlWrapper from './modules/Intl/IntlWrapper';
 import jwtDecode from 'jwt-decode';
 import setAuthToken from './util/setAuthToken.js';
@@ -17,31 +20,59 @@ import routes from './routes';
 // Base stylesheet
 require('./main.css');
 
-if (localStorage.jwtToken) {
-  setAuthToken(localStorage.jwtToken);
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: blue,
+  },
+  typography: {
+    useNextVariants: true,
+  },
+});
 
-  const decoded = jwtDecode(localStorage.jwtToken);
-  store.dispatch(setCurrentUser(decoded));
+// import injectTapEventPlugin from 'react-tap-event-plugin';
+// // Needed for onTouchTap
+// // http://stackoverflow.com/a/34015469/988941
+// injectTapEventPlugin();
 
-  const currentTime = Date.now() / 1000;
-  if (decoded.exp < currentTime) {
-    store.dispatch(logoutUser());
-    store.dispatch(clearCurrentProfile());
+export default class App extends Component {
 
-    window.location.href = '/login';
+  constructor(props) {
+    super(props);
+
+    this.state = {};
   }
-}
 
-export default function App(props) {
-  return (
-    <Provider store={props.store}>
-      <IntlWrapper>
-        <Router history={browserHistory}>
-          {routes}
-        </Router>
-      </IntlWrapper>
-    </Provider>
-  );
+  componentDidMount() {
+    console.log('componentDidMount', this.props); /* eslint no-console: 0 */
+    if (localStorage.jwtToken) {
+      setAuthToken(localStorage.jwtToken);
+
+      const decoded = jwtDecode(localStorage.jwtToken);
+      this.props.store.dispatch(setCurrentUser(decoded));
+
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        this.props.store.dispatch(logoutUser());
+        this.props.store.dispatch(clearCurrentProfile());
+
+        window.location.href = '/login';
+      }
+    }
+  }
+
+  render() {
+    return (
+      <Provider store={this.props.store}>
+        <IntlWrapper>
+          <MuiThemeProvider theme={muiTheme}>
+            <Router history={browserHistory}>
+              {routes}
+            </Router>
+          </MuiThemeProvider>
+        </IntlWrapper>
+      </Provider>
+    );
+  }
 }
 
 App.propTypes = {

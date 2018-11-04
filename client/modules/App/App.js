@@ -41,6 +41,7 @@ export class App extends Component {
           <Helmet
             title="MERN Starter - Blog App"
             titleTemplate="%s - Blog App"
+
             meta={[
               { charset: 'utf-8' },
               {
@@ -49,7 +50,7 @@ export class App extends Component {
               },
               {
                 name: 'viewport',
-                content: 'width=device-width, initial-scale=1',
+                content: 'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no',
               },
             ]}
           />

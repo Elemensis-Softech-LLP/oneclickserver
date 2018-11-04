@@ -21,16 +21,27 @@ if (process.env.NODE_ENV !== 'production') {
   require('./modules/User/pages/SignupPage/SignupPage');
   require('./modules/Post/pages/PostListPage/PostListPage');
   require('./modules/Post/pages/PostDetailPage/PostDetailPage');
+  require('./components/Home');
+  require('./components/NotFound');
 }
 
 // react-router setup with code-splitting
 // More info: http://blog.mxstbr.com/2016/01/react-apps-with-pages/
 export default (
-  <Route path="/" component={App}>
+  <Route exact path="/" component={App}>
     <IndexRoute
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Post/pages/PostListPage/PostListPage').default);
+        });
+      }}
+    />
+    <Route
+      exact
+      path="/home"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./components/Home').default);
         });
       }}
     />
@@ -67,7 +78,7 @@ export default (
       path="/not-found"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
-          cb(null, require('./components/not-found/NotFound').default);
+          cb(null, require('./components/NotFound').default);
         });
       }}
     />
