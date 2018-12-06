@@ -145,12 +145,12 @@ function Signup(props) {
 
           <form className={classes.form} onSubmit={props.auth}>
             <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="name">Email Address</InputLabel>
+              <InputLabel htmlFor="name">Name</InputLabel>
               <Input id="name" name="name" autoComplete="name" autoFocus onChange={props.change} />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input id="email" name="email" autoComplete="email" autoFocus onChange={props.change} />
+              <Input id="email" name="email" autoComplete="email" onChange={props.change} />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
