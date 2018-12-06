@@ -1,34 +1,32 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const planSchema = new Schema({
   name: {
     type: String,
     required: true,
   },
-  email: {
+  description: {
     type: String,
     required: true,
   },
-  password: {
+  amount: {
     type: String,
     required: true,
   },
-  avatar: {
+  productId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  stripePlanId: {
     type: String,
+    required: true,
   },
-  data: {
-    type: Date,
-    default: Date.now,
-  },
-  role: {
-    type: String,
-    default: 'user',
-    enum: ['admin', 'user'],
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
 }, {
   timestamps: {
@@ -38,4 +36,4 @@ const userSchema = new Schema({
 });
 
 
-export default mongoose.model('User', userSchema);
+export default mongoose.model('Plan', planSchema);
